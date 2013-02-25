@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./test/vm/filepath.filter | sed 's/(.*)/()/g'

@@ -11,13 +11,13 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCC)
 	INCLUDE(CheckCSourceCompiles)
 	CHECK_C_SOURCE_COMPILES("#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40300
-#error Need GCC 4.3.0+
+#if GCC_VERSION < 40400
+#error Need GCC 4.4.0+
 #endif
-int main() { return 0; }" HAVE_GCC_43)
+int main() { return 0; }" HAVE_GCC_44)
 
-	if(NOT HAVE_GCC_43)
-		message(FATAL_ERROR "Need at least GCC 4.3")
+	if(NOT HAVE_GCC_44)
+		message(FATAL_ERROR "Need at least GCC 4.4")
 	endif()
 
 endif()
@@ -46,6 +46,7 @@ include(HPHPFunctions)
 include(HPHPFindLibs)
 
 add_definitions(-D_GNU_SOURCE -D_REENTRANT=1 -D_PTHREADS=1)
+add_definitions(-DHHVM_LIB_PATH_DEFAULT="${HPHP_HOME}/bin")
 
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
 	add_definitions(-DRELEASE=1)
@@ -111,10 +112,10 @@ endif()
 
 IF($ENV{CXX} MATCHES "icpc")
 	set(CMAKE_C_FLAGS "-no-ipo -fp-model precise -wd584 -wd1418 -wd1918 -wd383 -wd869 -wd981 -wd424 -wd1419 -wd444 -wd271 -wd2259 -wd1572 -wd1599 -wd82 -wd177 -wd593 -w")
-	set(CMAKE_CXX_FLAGS "-no-ipo -fp-model precise -wd584 -wd1418 -wd1918 -wd383 -wd869 -wd981 -wd424 -wd1419 -wd444 -wd271 -wd2259 -wd1572 -wd1599 -wd82 -wd177 -wd593 -fno-omit-frame-pointer -ftemplate-depth-60 -Wall -Woverloaded-virtual -Wno-deprecated -w1 -Wno-strict-aliasing -Wno-write-strings -Wno-invalid-offsetof -fno-operator-names")
+	set(CMAKE_CXX_FLAGS "-no-ipo -fp-model precise -wd584 -wd1418 -wd1918 -wd383 -wd869 -wd981 -wd424 -wd1419 -wd444 -wd271 -wd2259 -wd1572 -wd1599 -wd82 -wd177 -wd593 -fno-omit-frame-pointer -ftemplate-depth-120 -Wall -Woverloaded-virtual -Wno-deprecated -w1 -Wno-strict-aliasing -Wno-write-strings -Wno-invalid-offsetof -fno-operator-names")
 else()
 	set(CMAKE_C_FLAGS "-w")
-	set(CMAKE_CXX_FLAGS "-fno-gcse -fno-omit-frame-pointer -ftemplate-depth-60 -Wall -Woverloaded-virtual -Wno-deprecated -Wno-parentheses -Wno-strict-aliasing -Wno-write-strings -Wno-invalid-offsetof -fno-operator-names")
+	set(CMAKE_CXX_FLAGS "-fno-gcse -fno-omit-frame-pointer -ftemplate-depth-120 -Wall -Woverloaded-virtual -Wno-deprecated -Wno-strict-aliasing -Wno-write-strings -Wno-invalid-offsetof -fno-operator-names -Wno-error=array-bounds -Wno-error=switch -std=gnu++0x -Werror=format-security -Wno-unused-result -Wno-sign-compare")
 endif()
 
 IF(CMAKE_COMPILER_IS_GNUCC)
@@ -125,5 +126,6 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 	SET (CMAKE_CXX_FLAGS_RELEASE "-O3")
 ENDIF()
 
-include_directories(${HPHP_HOME}/src)
-include_directories(${HPHP_HOME}/src/lib/system/gen)
+include_directories(${HPHP_HOME}/hphp)
+include_directories(${HPHP_HOME}/hphp/lib/system/gen)
+include_directories(${HPHP_HOME})
